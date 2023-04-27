@@ -194,15 +194,6 @@ def b_casos():
     return redirect(url_for('index_admin'))
 
 
-# @app.route('/rt_edt_cs/<int:id_caso>')
-# def rt_edt_cs(id_caso):
-#     id = request.form[id_caso]
-#     cursor = mysql.connection.cursor()
-#     cursor.execute('SELECT * FROM r_caso WHERE id_caso = %s', (id,))
-#     datos = cursor.fetchone()
-#     return render_template('admin/update.html', datos=datos)
-
-
 # Editar caso
 @app.route('/editar_caso/<int:id>', methods=['POST', 'GET'])
 def editar_caso(id):
