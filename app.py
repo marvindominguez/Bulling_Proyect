@@ -222,15 +222,16 @@ def editar_caso(id):
     return render_template('admin/update.html', datos=datos)
 
 
-@app.route('/delete')
-def delete():
+@app.route('/delete/<int:id>', methods=['POST', 'GET'])
+def delete(id):
     if request.method == 'POST':
-        id_caso = request.form['id_caso']
         cursor = mysql.connection.cursor()
-        cursor.execute('DELETE FROM r_caso WHERE id_caso = %s', (id_caso,))
+        query = 'DELETE FROM r_caso WHERE id_caso = %s'
+        cursor.execute(query,(id,))
         mysql.connection.commit()
+        cursor.close()
         msg = 'El caso ha sido eliminado Correctamente'
-        return render_template('admin/index.html', msg=msg)
+        return redirect(url_for('index_admin', msg=msg))
 
 
 def status_401(error):
