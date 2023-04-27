@@ -337,40 +337,112 @@
 </head>
 
 <body>
-    <div class="topnav">
-        <a class="active" href="{{ url_for('register_caso') }}">Registrar Caso</a>
-        <a href="{{ url_for('logout') }}"> Cerrar sesión</a>
+    {% if estudiante %}
 
+    <div class="container">
+        <form action="/res_caso" method="POST">
+            <div class="row">
+                <center>
 
-    </div>
-    <br>
-    <br>
+                </center>
+                <h4>Datos Del Profesor</h4>
 
-        <div class="container">
-        <form action="/registe_caso" method="POST">
-            <div class="input-group input-group-icon">
-                <input type="text" name="id_profesor" value="{{ session['id_profesor'] }}" required="" readonly>
-                <div class="input-icon">
-                    <i class="fa fa-user"></i>
+                <div class="input-group input-group-icon">
+                    <input type="text" name="id_profesor" value="{{ session['id_profesor'] }}" required="" readonly>
+                    
+                    <div class="input-icon">
+                        <i class="fa fa-user"></i>
+                    </div>
+                </div>
+                <div class="input-group input-group-icon">
+                    <input type="text"  value="{{ session['nombre'] }}" required="" readonly>
+                    <div class="input-icon">
+                        <i class="fa fa-user"></i>
+                    </div>
+                </div>
+
+                <h4>Datos Del Caso</h4>
+                <div class="input-group input-group-icon">
+                    <input type="text" name="nombre"  value="{{ estudiante[1] }}" readonly>
+                    <div class="input-icon">
+                        <i class="fa fa-user"></i>
+                    </div>
+
+                </div>
+
+                <div class="input-group input-group-icon">
+                    <input type="text" name="apellido" id="apellido" value="{{ estudiante[2] }}" readonly>
+                    <div class="input-icon">
+                        <i class="fa fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="input-group input-group-icon">
+                    <input type="text" name="identificacion" value="{{ estudiante[3] }}" readonly>
+                    <div class="input-icon">
+                        <i class="fa fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="input-group input-group-icon">
+                    <input type="text" name="curse" id="curse" value="{{ estudiante[4] }}" readonly>
+                    <div class="input-icon">
+                        <i class="fa fa-key"></i>
+                    </div>
+                </div>
+                <div class="input-group input-group-icon">
+                    <input type="number" name="edad" value="{{ estudiante[5] }}" readonly>
+                    <div class="input-icon">
+                        <i class="fa fa-key"></i>
+                    </div>
+                </div>
+                <div class="input-group input-group-icon">
+                    <input type="text" name="observacion" placeholder="¿Qué sucedió...?" />
+                    <div class="input-icon">
+                        <i class="fa fa-envelope"></i>
+                    </div>
+                </div>
+                <div class="input-group input-group-icon">
+                    <label style="margin-left: 40px;">Semaforo*</label>
+                    <select name="semaforo" id="">
+                        <option>Seleccione</option>
+                        <option value="Verde">Verde</option>
+                        <option value="Amarillo">Amarillo</option>
+                        <option value="Rojo">Rojo</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fa fa-key"></i>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-half">
+                    <h4>Fecha Del Caso</h4>
+                    <div class="input-group">
+                        <div class="col-third">
+                            <input id="gender-male" type="datetime-local" name="hora" value="" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-half">
+                    <h4>Genero</h4>
+                    <div class="input-group">
+                        <select name="genero" id="">
+                            <option value="Hombre">Hombre</option>
+                            <option value="Mujer">Mujer</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div class="input-group input-group-icon">
-                <input type="text" name="nombre" value="{{ session['nombre'] }}" required="" readonly>
-                <div class="input-icon">
-                    <i class="fa fa-user"></i>
-                </div>
-            </div>
-            <div class="input-group input-group-icon">
-                <input type="text" name="buscar" id="doc_estudiante" placeholder="Indentificación Estudiante">
-                <div class="input-icon">
-                    <i class="fa fa-user"></i>
-                </div>
-            </div>
-
-            <input type="submit" value="Buscar">
+            <input type="submit" class="btn btn-primary">
         </form>
+    </div>
+    {% else %}
+    <p>No se encontró el estudiante</p>
 
-       <p></p>
+    {% endif %}
 
 </body>
 

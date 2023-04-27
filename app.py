@@ -1,20 +1,25 @@
+
 from flask import Flask, redirect, render_template, session, request, url_for, session, make_response
 from flask_mysqldb import MySQL
+from flask.wrappers import Request
+from MySQLdb.cursors import Cursor
 
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'reporte'
-app.secret_key = 'ghjklñ'
+app.config['MYSQL_DB'] = 'reportes'
+
 
 mysql = MySQL(app)
+app.secret_key = 'ghjklñ'
 
 
 @app.route('/')
 def home():
     return render_template('index.html')
+
 
 @app.route('/index_user')
 def index_user():
@@ -52,15 +57,16 @@ def index_profe():
 
 @app.route('/register')  # Registrar profesor
 def register():
-    return render_template('admin/register.html')
+    datos = ['', '', '', '', '', '', '', '', '', '']
+    return render_template('admin/register.html', datos=datos)
 
 
-@app.route('/register_caso')  # Registrar Caso
+@app.route('/register_caso')  # Redireccionar Caso
 def register_caso():
     return render_template('profesor/register.html')
 
 
-@app.route('/login', methods=['Get', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         identificacion = request.form['documento']
@@ -68,37 +74,54 @@ def login():
         cursor = mysql.connection.cursor()
         cursor.execute(
             'SELECT * FROM login WHERE documento = %s AND contraseña = %s', (identificacion, contraseña))
-        admin = cursor.fetchall()
-        print(admin)
-        if admin:
+        user = cursor.fetchone()
+        # print(user)
+        if user:
+            
             return redirect(url_for('index_admin'))
         else:
             msg = 'Los datos ingresados son incorrectos'
-            return render_template('admin/login.html')
+            return render_template('admin/login.html', msg=msg)
 
 
 @app.route('/login_p', methods=['POST'])
 def login_p():
     msg = ''
     if request.method == 'POST':
-        documento = request.form['documento']
-        contraseña = request.form['contraseña']
+        documentop = request.form['documento']
+        contraseñap = request.form['contraseña']
         cursor = mysql.connection.cursor()
         cursor.execute(
-            'SELECT * FROM login_profesor WHERE documento = %s AND contraseña = %s', (documento, contraseña))
-        profe = cursor.fetchone()
-        if profe:
+            'SELECT * FROM login_profesor WHERE documento = %s AND contraseña = %s', (documentop, contraseñap))
+        user = cursor.fetchone()
+        if user:
             session['loggedin'] = True
-            session['id_profesor'] = profe[0]
-            session['nombre'] = profe[1]
-            session['apellido'] = profe[2]
-            session['correo'] = profe[3]
-            session['celular'] = profe[4]
-            session['documento'] = profe[5]
+            session['id_profesor'] = user[0]
+            session['nombre'] = user[1]
+            session['apellido'] = user[2]
+            session['correo'] = user[3]
+            session['celular'] = user[4]
+            session['documento'] = user[5]
             return redirect(url_for('register_caso'))
         else:
             msg = 'Los datos ingresados son incorrectos'
             return render_template('profesor/login.html', msg=msg)
+
+
+# Cerrar sesion
+@app.route('/logout')
+def logout():
+    # removemos los datos de la sesión para cerrar sesión
+    session.pop('loggedin', None)
+    session.pop('id_profesor', None)
+    session.pop('id_psicologo', None)
+    session.pop('nombre', None)
+    session.pop('apellido', None)
+    session.pop('correo', None)
+    session.pop('celular', None)
+    session.pop('documento', None)
+    session.pop('contraseña', None)
+    return redirect(url_for('index'))
 
 
 @app.route('/res_profe', methods=['GET', 'POST'])  # Registrar Profe
@@ -119,7 +142,7 @@ def res_profe():
         if doc:
             msg = 'El documento ya se encuentra registrado'
             return render_template('admin/register.html', msg=msg)
-        cursor= mysql.connection.cursor()
+        cursor = mysql.connection.cursor()
         cursor.execute('INSERT INTO login_profesor (nombre, apellido, correo, documento, contraseña) VALUES (%s, %s, %s, %s, %s)',
                        (nombre, apellido, correo, cedula, contra))
         mysql.connection.commit()
@@ -127,25 +150,34 @@ def res_profe():
     return render_template('admin/register.html', msg=msg)
 
 
-@app.route('/registe_caso', methods=['POST', 'GET'])
+
+@app.route('/registe_caso', methods=['POST'])
 def registe_caso():
-    msg = ''
     if request.method == 'POST':
-        id_profesor = request.form['id_profesor']
-        semaforo = request.form['semaforo']
-        observacion = request.form['observacion']
-        nombre = request.form['nombre']
-        apellido = request.form['apellido']
-        curso_est = request.form['curso']
-        edad = request.form['edad']
-        fecha = request.form['hora']
-        genero = request.form['genero']
-        doc_est = request.form['doc_estudiante']
+        search = request.form['buscar']
         cursor = mysql.connection.cursor()
-        cursor.execute('INSERT INTO r_caso (semaforo, observacion, id_estudiante, nombre, apellido, curso, edad, fecha_caso, genero, id_profesor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                       (semaforo, observacion, doc_est, nombre, apellido, curso_est, edad, fecha, genero, id_profesor))
-        mysql.connection.commit()
-        msg = 'El caso ha sido registrado Correctamente'
+        cursor.execute('SELECT * FROM estudiante WHERE identificacion = %s', (search,))
+        estudiante = cursor.fetchone()
+        print(estudiante)
+        return render_template('profesor/estudent_caso.html', estudiante=estudiante)
+    
+@app.route('/res_caso', methods=['POST'])
+def res_caso(): #registe_caso
+    id_profesor = request.form['id_profesor']
+    semaforo = request.form['semaforo']
+    nombre = request.form['nombre']
+    observacion = request.form['observacion']
+    curso_est = request.form['curse']
+    apellido_est = request.form['apellido']
+    edad = request.form['edad']
+    fecha = request.form['hora']
+    genero = request.form['genero']
+    doc_est = request.form['identificacion']
+    cursor = mysql.connection.cursor()
+    cursor.execute('INSERT INTO r_caso (semaforo, observacion, id_estudiante, nombre, apellido, curso, edad, fecha_caso, genero, id_profesor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                    (semaforo, observacion, doc_est, nombre, apellido_est, curso_est, edad, fecha, genero, id_profesor))
+    mysql.connection.commit()
+    msg = 'El caso ha sido registrado Correctamente'
     return render_template('profesor/register.html', msg=msg)
 
 
@@ -162,30 +194,16 @@ def b_casos():
     return redirect(url_for('index_admin'))
 
 
-# Cerrar sesion
-@app.route('/logout')
-def logout():
-    # removemos los datos de la sesión para cerrar sesión
-    session.pop('loggedin', None)
-    session.pop('id_profesor', None)
-    session.pop('id_psicologo', None)
-    session.pop('nombre', None)
-    session.pop('apellido', None)
-    session.pop('correo', None)
-    session.pop('celular', None)
-    session.pop('documento', None)
-    session.pop('contraseña', None)
-    session.clear()
-    # Redirige a la pagina de login
-    return redirect(url_for('index'))
+def status_401(error):
+    return render_template('login')
 
-@app.after_request
-def add_header(response):
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    return response
+
+def status_404(error):
+    return '<h1>Página no encontrada</h1>', 404
 
 
 if __name__ == '__main__':
-    app.run(port=3000, debug=True)
+    app.register_error_handler(401, status_401)
+    app.register_error_handler(404, status_404)
+    # login_manager.init_app(app)
+    app.run(port=5000, debug=True)
