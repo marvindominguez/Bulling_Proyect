@@ -337,6 +337,12 @@
 </head>
 
 <body>
+    <div class="topnav">
+        <a class="active" href="{{ url_for('register_caso') }}">Registrar Caso</a>
+        <a href="{{ url_for('logout') }}"> Cerrar sesión</a>
+
+
+    </div>
     {% if estudiante %}
 
     <div class="container">
@@ -440,7 +446,7 @@
         </form>
     </div>
     {% else %}
-    <p>No se encontró el estudiante</p>
+    <p style="text-align: center; color: black; size: 6px;">No se encontr&oacute el estudiante</p>
 
     {% endif %}
 
