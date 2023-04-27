@@ -1,10 +1,14 @@
 
-from flask import Flask, redirect, render_template, session, request, url_for, session, make_response
+from functools import wraps
+from flask import Flask, redirect, render_template, session, request, url_for, session, make_response, flash
 from flask_mysqldb import MySQL
 from flask.wrappers import Request
 from MySQLdb.cursors import Cursor
+# from flask_login import LoginManager
+
 
 app = Flask(__name__)
+# login_manager = LoginManager()
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -31,7 +35,7 @@ def base():
     return render_template('admin/home.html')
 
 
-@app.route('/index')
+@app.route('/index')  # login Psicologo
 def index():
     return render_template('admin/login.html')
 
@@ -77,7 +81,7 @@ def login():
         user = cursor.fetchone()
         # print(user)
         if user:
-            
+
             return redirect(url_for('index_admin'))
         else:
             msg = 'Los datos ingresados son incorrectos'
@@ -113,14 +117,9 @@ def login_p():
 def logout():
     # removemos los datos de la sesión para cerrar sesión
     session.pop('loggedin', None)
-    session.pop('id_profesor', None)
-    session.pop('id_psicologo', None)
-    session.pop('nombre', None)
-    session.pop('apellido', None)
-    session.pop('correo', None)
-    session.pop('celular', None)
     session.pop('documento', None)
     session.pop('contraseña', None)
+    session.clear()
     return redirect(url_for('index'))
 
 
@@ -150,19 +149,20 @@ def res_profe():
     return render_template('admin/register.html', msg=msg)
 
 
-
 @app.route('/registe_caso', methods=['POST'])
 def registe_caso():
     if request.method == 'POST':
         search = request.form['buscar']
         cursor = mysql.connection.cursor()
-        cursor.execute('SELECT * FROM estudiante WHERE identificacion = %s', (search,))
+        cursor.execute(
+            'SELECT * FROM estudiante WHERE identificacion = %s', (search,))
         estudiante = cursor.fetchone()
         print(estudiante)
         return render_template('profesor/estudent_caso.html', estudiante=estudiante)
-    
+
+
 @app.route('/res_caso', methods=['POST'])
-def res_caso(): #registe_caso
+def res_caso():  # registe_caso
     id_profesor = request.form['id_profesor']
     semaforo = request.form['semaforo']
     nombre = request.form['nombre']
@@ -175,7 +175,7 @@ def res_caso(): #registe_caso
     doc_est = request.form['identificacion']
     cursor = mysql.connection.cursor()
     cursor.execute('INSERT INTO r_caso (semaforo, observacion, id_estudiante, nombre, apellido, curso, edad, fecha_caso, genero, id_profesor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                    (semaforo, observacion, doc_est, nombre, apellido_est, curso_est, edad, fecha, genero, id_profesor))
+                   (semaforo, observacion, doc_est, nombre, apellido_est, curso_est, edad, fecha, genero, id_profesor))
     mysql.connection.commit()
     msg = 'El caso ha sido registrado Correctamente'
     return render_template('profesor/register.html', msg=msg)
@@ -192,6 +192,54 @@ def b_casos():
             print("los datos son", reporte)
             return render_template('admin/ver.html', reporte=reporte, busqueda=search)
     return redirect(url_for('index_admin'))
+
+
+# @app.route('/rt_edt_cs/<int:id_caso>')
+# def rt_edt_cs(id_caso):
+#     id = request.form[id_caso]
+#     cursor = mysql.connection.cursor()
+#     cursor.execute('SELECT * FROM r_caso WHERE id_caso = %s', (id,))
+#     datos = cursor.fetchone()
+#     return render_template('admin/update.html', datos=datos)
+
+
+# Editar caso
+@app.route('/editar_caso/<int:id>', methods=['POST', 'GET'])
+def editar_caso(id):
+    cursor = mysql.connection.cursor()
+    query = " SELECT * FROM r_caso WHERE id_caso = %s"
+    value = (id,)
+    cursor.execute(query, value)
+    datos = cursor.fetchone()
+    if datos is None:
+        msg = 'El caso no existe'
+        return render_template('admin/index.html', msg=msg)
+    if request.method == 'POST':
+        semaforo = request.form['semaforo']
+        observacion = request.form['observacion']
+        curso_est = request.form['curse']
+        edad = request.form['edad']
+        fecha = request.form['hora']
+        genero = request.form['genero']
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE r_caso SET semaforo = %s, observacion = %s, curso = %s, edad = %s, fecha_caso = %s, genero = %s WHERE id_caso = %s",
+                       (semaforo, observacion, curso_est, edad, fecha, genero, id))
+        mysql.connection.commit()
+        msg = 'El caso ha sido actualizado Correctamente'
+        return redirect(url_for('index_admin', msg=msg))
+    # Actualizar caso
+    return render_template('admin/update.html', datos=datos)
+
+
+@app.route('/delete')
+def delete():
+    if request.method == 'POST':
+        id_caso = request.form['id_caso']
+        cursor = mysql.connection.cursor()
+        cursor.execute('DELETE FROM r_caso WHERE id_caso = %s', (id_caso,))
+        mysql.connection.commit()
+        msg = 'El caso ha sido eliminado Correctamente'
+        return render_template('admin/index.html', msg=msg)
 
 
 def status_401(error):
