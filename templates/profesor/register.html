@@ -346,6 +346,12 @@
     <br>
     <br>
 
+    {% if msg %}
+
+    <p style="text-align: center; color: black;">
+        {{ msg }}
+    </p>
+    {% endif %}
         <div class="container">
         <form action="/registe_caso" method="POST">
             <div class="input-group input-group-icon">
