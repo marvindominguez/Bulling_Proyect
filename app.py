@@ -70,6 +70,7 @@ def register_caso():
     return render_template('profesor/register.html')
 
 
+
 @app.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
@@ -110,6 +111,15 @@ def login_p():
         else:
             msg = 'Los datos ingresados son incorrectos'
             return render_template('profesor/login.html', msg=msg)
+        
+@app.route('/ver_casos')
+def ver_casos():
+    user = session['id_profesor']
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT r.id_caso, r.semaforo, r.observacion, r.id_estudiante, r.nombre, r.apellido, r.curso, r.edad, r.fecha_caso, r.genero, l.nombre FROM r_caso r INNER JOIN login_profesor l ON r.id_profesor = l.id_profesor WHERE l.id_profesor=%s",(user,))
+    v_casos = cursor.fetchall()
+    return render_template('profesor/ver_casos.html', v_casos=v_casos)
+
 
 
 # Cerrar sesion

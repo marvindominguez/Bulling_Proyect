@@ -39,10 +39,16 @@
             padding: 15px;
             background-color: rgba(255, 255, 255, 0.2);
             color: #fff;
+            text-align: center;
+            font-weight: 100;
+            
+            
         }
 
         th {
-            text-align: left;
+            text-align: center;
+            cursor: default;
+            font-weight: bold;
         }
 
         thead th {
@@ -55,7 +61,7 @@
 
         tbody td {
             position: relative;
-            text-align: left;
+            text-align: center;
         }
 
         tbody td:hover:before {
@@ -145,17 +151,10 @@
 
 <body>
     <div class="topnav">
-        <a class="active" href="{{ url_for('base') }}">Inicio</a>
-        <a href="{{ url_for('res_profe') }}">Registrar Profesor</a>
-        <a href="{{ url_for('index_admin') }}">Buscar Casos</a>
+        <a class="active" href="{{ url_for('register_caso') }}">Registrar Caso</a>
+        <a href="{{ url_for('ver_casos') }}">Ver Caso</a>
         <a href="{{ url_for('logout') }}"> Cerrar sesión</a>
 
-        <div class="search-container">
-            <form name="formSearch" method="POST" action="/b_casos" class="search" autocomplete="off">
-                <input type="text" name="buscar" class="search__input" placeholder="Buscar Caso" name="search">
-                <button type="submit"><i class="fa fa-search"></i></button>
-            </form>
-        </div>
     </div>
     <br>
     <br>
@@ -163,7 +162,6 @@
     <br>
     <br>
     <br>
-    {{% if reporte %}}
 
     <div class="container" style="margin-top: 40px ;">
 
@@ -180,25 +178,25 @@
                     <th>Edad</th>
                     <th>Fecha del Caso</th>
                     <th>Genero</th>
-                    <th>Profesor</th>
+
 
 
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    {% for reporte in reporte %}
-                    <td>{{reporte.0}}</td>
-                    <td>{{reporte.1}}</td>
-                    <td>{{reporte.2}}</td>
-                    <td>{{reporte.3}}</td>
-                    <td>{{reporte.4}}</td>
-                    <td>{{reporte.5}}</td>
-                    <td>{{reporte.6}}</td>
-                    <td>{{reporte.7}}</td>
-                    <td>{{reporte.8}}</td>
-                    <td>{{reporte.9}}</td>
-                    <td>{{reporte.10}}</td>
+                    {% for v_casos in v_casos %}
+                    <td>{{v_casos.0}}</td>
+                    <td>{{v_casos.1}}</td>
+                    <td>{{v_casos.2}}</td>
+                    <td>{{v_casos.3}}</td>
+                    <td>{{v_casos.4}}</td>
+                    <td>{{v_casos.5}}</td>
+                    <td>{{v_casos.6}}</td>
+                    <td>{{v_casos.7}}</td>
+                    <td>{{v_casos.8}}</td>
+                    <td>{{v_casos.9}}</td>
+
 
                 </tr>
 
@@ -207,11 +205,6 @@
 
             </tbody>
     </div>
-    {% else %}
-    <p>No se encontr&oacute el estudiante</p>
-    {% endif %}
-
-
 </body>
 
 </html>
