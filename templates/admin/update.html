@@ -23,7 +23,8 @@
         }
 
         h4 {
-            color: #f0a500;
+            color: #111010;
+            opacity: 80%;
         }
 
         input,
@@ -337,23 +338,23 @@
 </head>
 
 <body>
-    <!-- <div class="topnav">
+   <div class="topnav">
         <a class="active" href="{{ url_for('register_caso') }}">Registrar Caso</a>
         <a href="{{ url_for('logout') }}"> Cerrar sesión</a>
 
 
-    </div> -->
+    </div>
     {% if datos %}
     <div class="container">
         <form action"" method="POST">
             <div class="row">
                 <center>
-                    <h4>Datos Del Caso</h4>
+                    <h4 style="background-color: #2196F3; color:#ffffff; padding: 16px;">Datos Del Caso</h4>
 
                 </center>
                               
                 <div class="input-group input-group-icon">
-                    <input type="text" name="nombre"  value="{{ datos[1] }}" readonly>
+                    <input type="text" name="nombre"  value="{{ datos[4] }}" readonly>
                     <div class="input-icon">
                         <i class="fa fa-user"></i>
                     </div>
@@ -361,7 +362,7 @@
                 </div>
 
                 <div class="input-group input-group-icon">
-                    <input type="text" name="apellido" id="apellido" value="{{ datos[2] }}" readonly>
+                    <input type="text" name="apellido" id="apellido" value="{{ datos[5] }}" >
                     <div class="input-icon">
                         <i class="fa fa-user"></i>
                     </div>
@@ -375,7 +376,7 @@
                 </div>
 
                 <div class="input-group input-group-icon">
-                    <input type="text" name="curse" id="curse" value="{{ datos[4] }}">
+                    <input type="text" name="curse" id="curse" value="{{ datos[6] }}">
                     <div class="input-icon">
                         <i class="fa fa-key"></i>
                     </div>
@@ -387,22 +388,20 @@
                     </div>
                 </div>
                 <div class="input-group input-group-icon">
-                    <input type="text" name="observacion" value="{{ datos[6] }}" />
+                    <input type="text" name="observacion" value="{{ datos[2] }}" />
                     <div class="input-icon">
                         <i class="fa fa-envelope"></i>
                     </div>
                 </div>
                 <div class="input-group input-group-icon">
-                    <label style="margin-left: 40px;">Semaforo*</label>
-                    <select name="semaforo" id="">
-                        <option>Seleccione</option>
-                        <option value="Verde">Verde</option>
-                        <option value="Amarillo">Amarillo</option>
-                        <option value="Rojo">Rojo</option>
+                    <label style="margin-left: 10px;"></label>
+                    <select name="semaforo" id="" style="background-color: #2196F3; color:#ffffff; ">
+                        <option  style="background-color: #2196F3; color:#ffffff">Sem&aacute;foro</option>
+                        <option value="Verde" style="background-color: #2196F3; color:#ffffff">Verde</option>
+                        <option value="Amarillo" style="background-color: #2196F3; color:#ffffff">Amarillo</option>
+                        <option value="Rojo"  style="background-color: #2196F3; color:#ffffff">Rojo</option>
                     </select>
-                    <div class="input-icon">
-                        <i class="fa fa-key"></i>
-                    </div>
+                 
                 </div>
 
             </div>

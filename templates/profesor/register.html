@@ -265,7 +265,7 @@
         .topnav {
             overflow: hidden;
             background-color: #e9e9e9;
-            margin-top: -20px;
+            margin-top: -22px;
         }
 
         .topnav a {
@@ -357,12 +357,12 @@
     </p>
     {% endif %}
 </center>
-<h4 style="text-align: center; font: 1.3em sans-serif; ">Buscar Estudiante</h4>
+<h4 style="background-color: #2196F3; color:#ffffff; padding: 16px; width: 564px; text-align: center; margin-left: 35%; border-radius: 0%;">Buscar Estudiante</h4>
         <div class="container">
             
         <form action="/registe_caso" method="POST">
             <div class="input-group input-group-icon">
-                <input type="text" name="id_profesor" value="{{ session['id_profesor'] }}" required="" readonly>
+                <input type="hidden" name="id_profesor" value="{{ session['id_profesor'] }}" required="" readonly>
                 <div class="input-icon">
                     <i class="fa fa-user"></i>
                 </div>

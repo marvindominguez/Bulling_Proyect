@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <!-- Created By CodingLab - www.codinglabweb.com -->
 <html lang="en" dir="ltr">
+  
 
 <head>
 
   <meta charset="UTF-8">
   <title> Registrar docentes</title>
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
     * {
       margin: 0;
@@ -30,7 +30,9 @@
       max-width: 700px;
       width: 100%;
       margin-top: 70px;
-      margin-left: 299px;
+      display: block;
+      left: 50%;
+      margin-left: 650px;
       background-color: #fff;
       padding: 25px 30px;
       border-radius: 5px;
@@ -130,7 +132,8 @@
 
     form .button {
       height: 45px;
-      margin: 35px 0
+      margin: 35px 0;
+      
     }
 
     form .button input {
@@ -144,7 +147,7 @@
       letter-spacing: 1px;
       cursor: pointer;
       transition: all 0.3s ease;
-      background: linear-gradient(135deg, #71b7e6, #9b59b6);
+      background-color:#2196F3;
     }
 
     form .button input:hover {
@@ -274,39 +277,39 @@
   </div>
   {% if msg %}
 
-  <div class="alert alert-warning alert-dismissible fade show" role="alert" style="background-color: red; text-align: center; color: #ddd;">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert" style="background-color: rgb(74, 154, 8); text-align: center; color: #ddd; padding: 10px; font-weight: bold;">
     {{ msg }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    
   </div>
   {% endif %}
   <div class="container">
-    <div class="title">Registrar docentes</div>
+    <div class="title">Registrar Docentes</div>
     <div class="content">
       <form action="/res_profe" , method="POST">
         <div class="user-details">
           <div class="input-box">
             <span class="details">Nombre</span>
-            <input type="text" name="nombre" placeholder="nombre" required>
+            <input type="text" name="nombre" placeholder="Nombre" required>
           </div>
           <div class="input-box">
             <span class="details">Apellido</span>
-            <input type="text" name="apellido" placeholder="apellido" required>
+            <input type="text" name="apellido" placeholder="Apellido" required>
           </div>
           <div class="input-box">
             <span class="details">Correo</span>
-            <input type="text" name="correo" placeholder="correo" required>
+            <input type="text" name="correo" placeholder="Correo" required>
           </div>
           <div class="input-box">
             <span class="details">Celular</span>
-            <input type="text" name="celular" placeholder="celular" required>
+            <input type="text" name="celular" placeholder="Celular" required>
           </div>
           <div class="input-box">
             <span class="details">Documento</span>
-            <input type="text" name="documento" placeholder="documento" required>
+            <input type="text" name="documento" placeholder="Cocumento" required>
           </div>
           <div class="input-box">
             <span class="details">Contraseña</span>
-            <input type="password" name="contraseña" placeholder="contraseña" required>
+            <input type="password" name="contraseña" placeholder="Contraseña" required>
           </div>
         </div>
         <div class="button">

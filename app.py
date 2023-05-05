@@ -4,6 +4,9 @@ from flask import Flask, redirect, render_template, session, request, url_for, s
 from flask_mysqldb import MySQL
 from flask.wrappers import Request
 from MySQLdb.cursors import Cursor
+from datetime import date
+
+
 # from flask_login import LoginManager
 
 
@@ -43,9 +46,14 @@ def index():
 @app.route('/index_admin')
 def index_admin():
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT r.id_caso, r.semaforo, r.observacion, r.id_estudiante, r.nombre, r.apellido, r.curso, r.edad, r.fecha_caso, r.genero, l.nombre FROM r_caso r INNER JOIN login_profesor l ON r.id_profesor = l.id_profesor")
+    cursor.execute("SELECT r.id_caso, r.semaforo, r.observacion, r.documento, r.nombre, r.apellido, r.curso, r.edad, r.fecha_caso, r.genero, l.nombre FROM r_caso r INNER JOIN login_profesor l ON r.id_profesor = l.id_profesor")
     casos = cursor.fetchall()
     print(casos)
+    cursor.execute("SELECT fecha_nacimiento FROM estudiante")
+    fecha_nac = cursor.fetchone()[0]
+    hoy = date.today()
+    edad = hoy.year - fecha_nac.year - ((hoy.month, hoy.day) <(fecha_nac.month, fecha_nac.day))
+    print(edad)
     return render_template('admin/index.html', casos=casos)
 
 
@@ -54,7 +62,7 @@ def login_profe():
     return render_template('profesor/login.html')
 
 
-@app.route('/index_profe')
+@app.route('/index_profe') 
 def index_profe():
     return render_template('profesor/index.html')
 
@@ -116,7 +124,7 @@ def login_p():
 def ver_casos():
     user = session['id_profesor']
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT r.id_caso, r.semaforo, r.observacion, r.id_estudiante, r.nombre, r.apellido, r.curso, r.edad, r.fecha_caso, r.genero, l.nombre FROM r_caso r INNER JOIN login_profesor l ON r.id_profesor = l.id_profesor WHERE l.id_profesor=%s",(user,))
+    cursor.execute("SELECT r.id_caso, r.semaforo, r.observacion, r.documento, r.nombre, r.apellido, r.curso, r.edad, r.fecha_caso, r.genero, l.nombre FROM r_caso r INNER JOIN login_profesor l ON r.id_profesor = l.id_profesor WHERE l.id_profesor=%s",(user,))
     v_casos = cursor.fetchall()
     return render_template('profesor/ver_casos.html', v_casos=v_casos)
 
@@ -149,7 +157,7 @@ def res_profe():
         doc = cursor.fetchone()
         cursor.close()
         if doc:
-            msg = 'El documento ya se encuentra registrado'
+            msg = 'El profesor ya se encuentra registrado.'
             return render_template('admin/register.html', msg=msg)
         cursor = mysql.connection.cursor()
         cursor.execute('INSERT INTO login_profesor (nombre, apellido, correo, documento, contraseña) VALUES (%s, %s, %s, %s, %s)',
@@ -165,7 +173,7 @@ def registe_caso():
         search = request.form['buscar']
         cursor = mysql.connection.cursor()
         cursor.execute(
-            'SELECT * FROM estudiante WHERE identificacion = %s', (search,))
+            'SELECT * FROM estudiante WHERE documento= %s', (search,))
         estudiante = cursor.fetchone()
         print(estudiante)
         return render_template('profesor/estudent_caso.html', estudiante=estudiante)
@@ -184,7 +192,7 @@ def res_caso():  # registe_caso
     genero = request.form['genero']
     doc_est = request.form['identificacion']
     cursor = mysql.connection.cursor()
-    cursor.execute('INSERT INTO r_caso (semaforo, observacion, id_estudiante, nombre, apellido, curso, edad, fecha_caso, genero, id_profesor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+    cursor.execute('INSERT INTO r_caso (semaforo, observacion, documento, nombre, apellido, curso, edad, fecha_caso, genero, id_profesor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                    (semaforo, observacion, doc_est, nombre, apellido_est, curso_est, edad, fecha, genero, id_profesor))
     mysql.connection.commit()
     msg = 'El caso ha sido registrado Correctamente'
@@ -197,7 +205,7 @@ def b_casos():
         if request.method == "POST":
             search = request.form['buscar']
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT r.id_caso, r.semaforo, r.observacion, r.id_estudiante, r.nombre, r.apellido, r.curso, r.edad, r.fecha_caso, r.genero, l.nombre FROM r_caso r INNER JOIN login_profesor l ON r.id_profesor = l.id_profesor WHERE r.id_estudiante = %s", (search,))
+            cursor.execute("SELECT r.id_caso, r.semaforo, r.observacion, r.documento, r.nombre, r.apellido, r.curso, r.edad, r.fecha_caso, r.genero, l.nombre FROM r_caso r INNER JOIN login_profesor l ON r.id_profesor = l.id_profesor WHERE r.documento = %s", (search,))
             reporte = cursor.fetchall()
             print("los datos son", reporte)
             return render_template('admin/ver.html', reporte=reporte, busqueda=search)
@@ -230,6 +238,22 @@ def editar_caso(id):
         return redirect(url_for('index_admin', msg=msg))
     # Actualizar caso
     return render_template('admin/update.html', datos=datos)
+
+@app.route('/seguimiento/<int:id>', methods=['POST', 'GET'])
+def seguimiento(id):
+    cursor = mysql.connection.cursor()
+    query = " SELECT * FROM r_caso WHERE id_caso = %s"
+    value = (id,)
+    cursor.execute(query, value)
+    datos = cursor.fetchone()
+    if datos is None:
+        msg = 'El caso no existe'
+        return render_template('admin/index.html', msg=msg)
+    cursor = mysql.connection.cursor()
+    query = "SELECT r.id_caso, r.semaforo, r.observacion, r.documento, r.nombre, r.apellido, r.curso, r.edad, r.fecha_caso, r.genero, l.nombre FROM r_caso r INNER JOIN login_profesor l ON r.id_profesor = l.id_profesor WHERE r.id_caso = %s"
+    cursor.execute(query, (id,))
+    seguimiento = cursor.fetchall()
+    return render_template('admin/mostrar_casos.html', seguimiento=seguimiento)
 
 
 @app.route('/delete/<int:id>', methods=['POST', 'GET'])

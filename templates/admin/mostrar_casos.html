@@ -24,9 +24,13 @@
         .container {
             position: absolute;
             top: 15%;
-            left: 50%;
-            display: block;
+            left: 25%;
+            display: flex;
             transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            height: max-content;
+
             max-width: max-content;
             max-height: max-content;
         }
@@ -41,7 +45,7 @@
             padding: 15px;
             background-color: rgba(255, 255, 255, 0.795);
             color: #ffffff;
-            
+            width:100px;
         }
 
         td {
@@ -53,6 +57,7 @@
 
         th {
             text-align: center;
+            
         }
 
         thead th {
@@ -163,9 +168,9 @@
 
 <body>
     <div class="topnav">
-        <a class="active" href="{{ url_for('base') }}">Inicio</a>
-        <a href="{{ url_for('res_profe') }}">Registrar Profesor</a>
+        <a class="active" href="{{ url_for('index_admin') }}">Inicio</a>
         <a href="{{ url_for('index_admin') }}">Buscar Casos</a>
+        <a href="{{ url_for('res_profe') }}">Registrar Profe</a>
         <a href="{{ url_for('logout') }}"> Cerrar sesión</a>
 
         <div class="search-container">
@@ -175,22 +180,21 @@
             </form>
         </div>
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    {% if reporte %}
 
-    <div class="container" style="margin-top: 40px ;">
+
+
+
+    </div>
+    <br>
+    
+    <div class="container" style="display: block; height: 70px;">
 
         <table>
             <thead>
                 <tr>
                     <th>Id caso</th>
                     <th>Semaforo</th>
-                    <th>Observación</th>
+                    <th style="width: 30px;">Observación</th>
                     <th>Id Estudiante</th>
                     <th>Nombre</th>
                     <th>Apellido</th>
@@ -199,37 +203,34 @@
                     <th>Fecha del Caso</th>
                     <th>Genero</th>
                     <th>Profesor</th>
+                    
 
 
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    {% for reporte in reporte %}
-                    <td>{{reporte.0}}</td>
-                    <td>{{reporte.1}}</td>
-                    <td>{{reporte.2}}</td>
-                    <td>{{reporte.3}}</td>
-                    <td>{{reporte.4}}</td>
-                    <td>{{reporte.5}}</td>
-                    <td>{{reporte.6}}</td>
-                    <td>{{reporte.7}}</td>
-                    <td>{{reporte.8}}</td>
-                    <td>{{reporte.9}}</td>
-                    <td>{{reporte.10}}</td>
-
-                </tr>
+                    {% for seguimiento in seguimiento %}
+                    <td>{{ seguimiento.0 }}</td>
+                    <td>{{ seguimiento.1 }}</td>
+                    <td>{{ seguimiento.2 }}</td>
+                    <td>{{ seguimiento.3 }}</td>
+                    <td>{{ seguimiento.4 }}</td>
+                    <td>{{ seguimiento.5 }}</td>
+                    <td>{{ seguimiento.6 }}</td>
+                    <td>{{ seguimiento.7 }}</td>
+                    <td>{{ seguimiento.8 }}</td>
+                    <td>{{ seguimiento.9 }}</td>
+                    <td>{{ seguimiento.10 }}</td>
+                    
+                   
+               </tr>
 
                 {% endfor %}
 
 
             </tbody>
     </div>
-    {% else %}
-    <p>No se encontr&oacute el estudiante</p>
-    {% endif %}
-
-
 </body>
 
 </html>
